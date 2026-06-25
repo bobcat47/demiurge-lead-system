@@ -12,7 +12,11 @@ import {
   Grid3X3,
   List,
   AlertCircle,
-  CheckCircle2
+  CheckCircle2,
+  Database,
+  Activity,
+  Wifi,
+  WifiOff
 } from 'lucide-react';
 import { Header } from '@/components/layout/Header';
 import { LeadCard } from '@/components/lead-finder/LeadCard';
@@ -398,12 +402,46 @@ export default function LeadFinderPage() {
               )}
             </div>
 
+            {/* Debug Info Panel */}
+            {hasSearched && !isSearching && leads.length > 0 && (
+              <div className="mb-4 p-3 bg-white/[0.02] border border-white/[0.06] flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-2">
+                    <Database className="w-4 h-4 text-white/30" />
+                    <span className="text-xs text-white/40">Data Source:</span>
+                    <span className={cn(
+                      "text-xs font-bold uppercase",
+                      usingRealData ? "text-emerald-400" : "text-amber-400"
+                    )}>
+                      {usingRealData ? `Live ${providerName}` : 'Mock Data'}
+                    </span>
+                  </div>
+                  <div className="w-px h-4 bg-white/[0.1]" />
+                  <div className="flex items-center gap-2">
+                    <Activity className="w-4 h-4 text-white/30" />
+                    <span className="text-xs text-white/40">Results:</span>
+                    <span className="text-xs text-white font-mono">{leads.length}</span>
+                  </div>
+                </div>
+                {usingRealData && (
+                  <span className="text-[10px] text-emerald-400/60">
+                    ✓ Real business data from API
+                  </span>
+                )}
+              </div>
+            )}
+
             {/* Results Grid */}
             {isSearching ? (
               <div className="flex items-center justify-center py-20">
                 <div className="text-center">
                   <Loader2 className="w-12 h-12 text-cyan-400 animate-spin mx-auto mb-4" />
                   <p className="text-white/60">Scanning business directories...</p>
+                  {usingRealData && (
+                    <p className="text-xs text-emerald-400 mt-2">
+                      Connected to {providerName}...
+                    </p>
+                  )}
                 </div>
               </div>
             ) : leads.length === 0 ? (

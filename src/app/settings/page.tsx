@@ -12,21 +12,53 @@ import {
   Globe,
   Crosshair,
   MapPin,
-  Search
+  Search,
+  RefreshCw,
+  CheckCircle2,
+  AlertCircle,
+  Activity
 } from 'lucide-react';
 import { Header } from '@/components/layout/Header';
+import { cn } from '@/lib/utils';
+
+interface ConfigStatus {
+  googlePlaces: { configured: boolean; keyPreview: string | null };
+  serpapi: { configured: boolean; keyPreview: string | null };
+  apify: { configured: boolean; keyPreview: string | null };
+  activeProvider: string;
+}
 
 export default function SettingsPage() {
   const [mounted, setMounted] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [configStatus, setConfigStatus] = useState<ConfigStatus | null>(null);
+  const [isTesting, setIsTesting] = useState(false);
 
   useEffect(() => {
     setMounted(true);
+    testConfiguration();
   }, []);
+
+  const testConfiguration = async () => {
+    setIsTesting(true);
+    try {
+      const res = await fetch('/api/config/test');
+      const data = await res.json();
+      if (data.success) {
+        setConfigStatus(data.config);
+      }
+    } catch (error) {
+      console.error('Failed to test configuration:', error);
+    } finally {
+      setIsTesting(false);
+    }
+  };
 
   const handleSave = () => {
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
+    // Re-test after "save" to show updated status
+    setTimeout(() => testConfiguration(), 500);
   };
 
   if (!mounted) return null;
@@ -63,10 +95,121 @@ export default function SettingsPage() {
             animate={{ opacity: 1, y: 0 }}
             className="p-6 rounded-xl bg-gradient-to-br from-white/[0.05] to-white/[0.02] border border-white/[0.06]"
           >
-            <h2 className="text-lg font-semibold text-white mb-6 flex items-center gap-2">
-              <Crosshair className="w-5 h-5 text-cyan-400" />
-              Lead Finder Data Providers
-            </h2>
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-lg font-semibold text-white flex items-center gap-2">
+                <Crosshair className="w-5 h-5 text-cyan-400" />
+                Lead Finder Data Providers
+              </h2>
+              <button
+                onClick={testConfiguration}
+                disabled={isTesting}
+                className="flex items-center gap-2 px-3 py-1.5 text-xs bg-white/[0.05] text-white/60 border border-white/[0.08] hover:bg-white/[0.08] transition-colors disabled:opacity-50"
+              >
+                {isTesting ? (
+                  <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                ) : (
+                  <Activity className="w-3.5 h-3.5" />
+                )}
+                Test Config
+              </button>
+            </div>
+
+            {/* Configuration Status */}
+            {configStatus && (
+              <div className="mb-6 space-y-3">
+                {/* Active Provider Badge */}
+                <div className={cn(
+                  "p-4 border rounded-lg flex items-center gap-3",
+                  configStatus.activeProvider !== 'mock'
+                    ? "bg-emerald-500/5 border-emerald-500/20"
+                    : "bg-amber-500/5 border-amber-500/20"
+                )}>
+                  {configStatus.activeProvider !== 'mock' ? (
+                    <CheckCircle2 className="w-5 h-5 text-emerald-400 flex-shrink-0" />
+                  ) : (
+                    <AlertCircle className="w-5 h-5 text-amber-400 flex-shrink-0" />
+                  )}
+                  <div>
+                    <p className={cn(
+                      "font-medium",
+                      configStatus.activeProvider !== 'mock' ? "text-emerald-400" : "text-amber-400"
+                    )}>
+                      {configStatus.activeProvider !== 'mock' 
+                        ? `✅ LIVE DATA ACTIVE: ${configStatus.activeProvider.toUpperCase()}`
+                        : "⚠️ USING MOCK DATA"
+                      }
+                    </p>
+                    <p className="text-xs text-white/40 mt-0.5">
+                      {configStatus.activeProvider !== 'mock'
+                        ? "Your Lead Finder searches will use real business data from this provider."
+                        : "Add an API key below to enable live business data from real sources."
+                      }
+                    </p>
+                  </div>
+                </div>
+
+                {/* Individual Status */}
+                <div className="grid grid-cols-3 gap-2">
+                  <div className={cn(
+                    "p-3 border text-center",
+                    configStatus.googlePlaces.configured 
+                      ? "bg-emerald-500/5 border-emerald-500/20" 
+                      : "bg-white/[0.02] border-white/[0.06]"
+                  )}>
+                    <div className="text-xs text-white/40 mb-1">Google Places</div>
+                    <div className={cn(
+                      "text-sm font-medium",
+                      configStatus.googlePlaces.configured ? "text-emerald-400" : "text-white/30"
+                    )}>
+                      {configStatus.googlePlaces.configured ? '✓ SET' : '—'}
+                    </div>
+                    {configStatus.googlePlaces.keyPreview && (
+                      <div className="text-[10px] text-white/20 mt-1 font-mono">
+                        {configStatus.googlePlaces.keyPreview}
+                      </div>
+                    )}
+                  </div>
+                  <div className={cn(
+                    "p-3 border text-center",
+                    configStatus.serpapi.configured 
+                      ? "bg-emerald-500/5 border-emerald-500/20" 
+                      : "bg-white/[0.02] border-white/[0.06]"
+                  )}>
+                    <div className="text-xs text-white/40 mb-1">SerpAPI</div>
+                    <div className={cn(
+                      "text-sm font-medium",
+                      configStatus.serpapi.configured ? "text-emerald-400" : "text-white/30"
+                    )}>
+                      {configStatus.serpapi.configured ? '✓ SET' : '—'}
+                    </div>
+                    {configStatus.serpapi.keyPreview && (
+                      <div className="text-[10px] text-white/20 mt-1 font-mono">
+                        {configStatus.serpapi.keyPreview}
+                      </div>
+                    )}
+                  </div>
+                  <div className={cn(
+                    "p-3 border text-center",
+                    configStatus.apify.configured 
+                      ? "bg-emerald-500/5 border-emerald-500/20" 
+                      : "bg-white/[0.02] border-white/[0.06]"
+                  )}>
+                    <div className="text-xs text-white/40 mb-1">Apify</div>
+                    <div className={cn(
+                      "text-sm font-medium",
+                      configStatus.apify.configured ? "text-emerald-400" : "text-white/30"
+                    )}>
+                      {configStatus.apify.configured ? '✓ SET' : '—'}
+                    </div>
+                    {configStatus.apify.keyPreview && (
+                      <div className="text-[10px] text-white/20 mt-1 font-mono">
+                        {configStatus.apify.keyPreview}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
             
             <div className="mb-6 p-4 bg-amber-500/5 border border-amber-500/10 rounded-lg">
               <p className="text-sm text-amber-400/80">
