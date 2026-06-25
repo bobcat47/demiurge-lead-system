@@ -62,10 +62,10 @@ const navItems = [
     description: 'Analysis & reports'
   },
   { 
-    id: 'logs', 
+    id: 'system-logs', 
     label: 'System Logs', 
     icon: Terminal, 
-    href: '/logs',
+    href: '/system-logs',
     description: 'Audit & monitoring'
   },
   { 
