@@ -44,7 +44,10 @@ export async function POST(request: Request) {
 
     return NextResponse.json({
       success: true,
-      ...result,
+      leads: result.leads,
+      total: result.total,
+      query: result.query,
+      searchId: result.searchId,
       provider: usedProvider,
       providerError,
       usingMockData: usedProvider === 'mock',
