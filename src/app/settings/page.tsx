@@ -9,7 +9,10 @@ import {
   Bell,
   Shield,
   Database,
-  Globe
+  Globe,
+  Crosshair,
+  MapPin,
+  Search
 } from 'lucide-react';
 import { Header } from '@/components/layout/Header';
 
@@ -54,18 +57,58 @@ export default function SettingsPage() {
 
         {/* Settings Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* API Keys */}
+          {/* Lead Finder Data Providers */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className="p-6 rounded-xl bg-gradient-to-br from-white/[0.05] to-white/[0.02] border border-white/[0.06]"
           >
             <h2 className="text-lg font-semibold text-white mb-6 flex items-center gap-2">
-              <Key className="w-5 h-5 text-cyan-400" />
-              API Keys
+              <Crosshair className="w-5 h-5 text-cyan-400" />
+              Lead Finder Data Providers
             </h2>
             
+            <div className="mb-6 p-4 bg-amber-500/5 border border-amber-500/10 rounded-lg">
+              <p className="text-sm text-amber-400/80">
+                <strong>Priority Order:</strong> Google Places API → SerpAPI → Apify → Mock Data
+              </p>
+              <p className="text-xs text-white/40 mt-1">
+                Add at least one API key below to enable live business data. The system will automatically fall back to mock data if no APIs are configured.
+              </p>
+            </div>
+            
             <div className="space-y-4">
+              <div>
+                <label className="block text-sm text-white/60 mb-2 flex items-center gap-2">
+                  <MapPin className="w-4 h-4" />
+                  Google Places API Key
+                  <span className="px-2 py-0.5 text-[10px] bg-emerald-500/10 text-emerald-400 rounded-sm">RECOMMENDED</span>
+                </label>
+                <input 
+                  type="password"
+                  placeholder="Enter your Google Places API key"
+                  className="w-full bg-black/30 border border-white/[0.08] rounded-lg px-4 py-3 text-white placeholder:text-white/30 focus:outline-none focus:border-cyan-500/50"
+                />
+                <p className="text-xs text-white/40 mt-1">
+                  Get from <a href="https://console.cloud.google.com/" target="_blank" rel="noopener noreferrer" className="text-cyan-400 hover:underline">Google Cloud Console</a>. Enable Places API.
+                </p>
+              </div>
+              
+              <div>
+                <label className="block text-sm text-white/60 mb-2 flex items-center gap-2">
+                  <Search className="w-4 h-4" />
+                  SerpAPI Key
+                </label>
+                <input 
+                  type="password"
+                  placeholder="Enter your SerpAPI key"
+                  className="w-full bg-black/30 border border-white/[0.08] rounded-lg px-4 py-3 text-white placeholder:text-white/30 focus:outline-none focus:border-cyan-500/50"
+                />
+                <p className="text-xs text-white/40 mt-1">
+                  Get from <a href="https://serpapi.com/" target="_blank" rel="noopener noreferrer" className="text-cyan-400 hover:underline">SerpAPI.com</a>. 100 free searches/month.
+                </p>
+              </div>
+              
               <div>
                 <label className="block text-sm text-white/60 mb-2">Apify Token</label>
                 <input 
@@ -73,9 +116,26 @@ export default function SettingsPage() {
                   placeholder="Enter your Apify API token"
                   className="w-full bg-black/30 border border-white/[0.08] rounded-lg px-4 py-3 text-white placeholder:text-white/30 focus:outline-none focus:border-cyan-500/50"
                 />
-                <p className="text-xs text-white/40 mt-1">Required for premium scraping sources</p>
+                <p className="text-xs text-white/40 mt-1">
+                  Get from <a href="https://console.apify.com/" target="_blank" rel="noopener noreferrer" className="text-cyan-400 hover:underline">Apify Console</a>. For Google Maps scraping.
+                </p>
               </div>
-              
+            </div>
+          </motion.div>
+
+          {/* API Keys */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="p-6 rounded-xl bg-gradient-to-br from-white/[0.05] to-white/[0.02] border border-white/[0.06]"
+          >
+            <h2 className="text-lg font-semibold text-white mb-6 flex items-center gap-2">
+              <Key className="w-5 h-5 text-cyan-400" />
+              Other API Keys
+            </h2>
+            
+            <div className="space-y-4">
               <div>
                 <label className="block text-sm text-white/60 mb-2">OpenAI API Key</label>
                 <input 
@@ -83,7 +143,7 @@ export default function SettingsPage() {
                   placeholder="Enter your OpenAI API key"
                   className="w-full bg-black/30 border border-white/[0.08] rounded-lg px-4 py-3 text-white placeholder:text-white/30 focus:outline-none focus:border-cyan-500/50"
                 />
-                <p className="text-xs text-white/40 mt-1">Required for AI-powered features</p>
+                <p className="text-xs text-white/40 mt-1">Required for AI-powered proposal generation</p>
               </div>
             </div>
           </motion.div>
