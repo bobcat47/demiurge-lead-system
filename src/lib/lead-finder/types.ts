@@ -61,6 +61,10 @@ export interface LeadSearchResult {
   total: number;
   query: LeadSearchParams;
   searchId: string;
+  // Provider info (added by API)
+  provider?: string;
+  providerError?: string;
+  usingMockData?: boolean;
 }
 
 export interface VapiConfig {

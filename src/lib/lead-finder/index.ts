@@ -6,6 +6,9 @@ import { LeadSearchParams, LeadSearchResult } from './types';
 import { searchMockLeads } from './mock-provider';
 import { searchWithRealProvider, isRealProviderAvailable, getCurrentProviderName } from './real-providers';
 
+// Re-export for use in API routes
+export { searchMockLeads };
+
 // Unified search function - tries real providers first, falls back to mock
 export async function searchLeads(params: LeadSearchParams): Promise<LeadSearchResult> {
   // Check if real provider is available

@@ -57,6 +57,7 @@ export default function LeadFinderPage() {
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
   const [usingRealData, setUsingRealData] = useState(false);
   const [providerName, setProviderName] = useState('mock');
+  const [providerError, setProviderError] = useState<string | null>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [generatingId, setGeneratingId] = useState<string | null>(null);
   const [sendingToVapiId, setSendingToVapiId] = useState<string | null>(null);
@@ -96,11 +97,27 @@ export default function LeadFinderPage() {
       const result = await searchLeads(params);
       setLeads(result.leads);
       
+      // Update provider status based on actual API response
+      if (result.provider) {
+        setUsingRealData(result.provider !== 'mock');
+        setProviderName(result.provider);
+      }
+      if (result.providerError) {
+        setProviderError(result.providerError);
+      } else {
+        setProviderError(null);
+      }
+      
       // Show notification about data source
-      if (realAvailable) {
+      if (result.provider !== 'mock') {
         setNotification({ 
-          message: `Found ${result.leads.length} leads using ${provider}`, 
+          message: `Found ${result.leads.length} leads using ${result.provider}`, 
           type: 'success' 
+        });
+      } else if (result.providerError) {
+        setNotification({ 
+          message: `API error - showing demo data`, 
+          type: 'error' 
         });
       }
     } catch (error) {
@@ -333,13 +350,19 @@ export default function LeadFinderPage() {
           {/* Data Source Note */}
           <div className={cn(
             "mt-4 pt-4 border-t border-white/[0.06] flex items-center gap-2 text-xs",
-            usingRealData ? "text-emerald-400" : "text-white/30"
+            usingRealData ? "text-emerald-400" : providerError ? "text-rose-400" : "text-white/30"
           )}>
             <AlertCircle className="w-4 h-4" />
             {usingRealData ? (
               <span>
                 Using LIVE DATA from <strong className="uppercase">{providerName}</strong>. 
                 Results are from real business listings.
+              </span>
+            ) : providerError ? (
+              <span>
+                <strong>API Error:</strong> {providerError.includes('not activated') 
+                  ? 'Google Places API not enabled in Google Cloud Console. Showing demo data.' 
+                  : providerError}
               </span>
             ) : (
               <span>
@@ -365,9 +388,11 @@ export default function LeadFinderPage() {
                       "px-2 py-0.5 text-[10px] font-bold uppercase border rounded-sm",
                       usingRealData 
                         ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" 
-                        : "bg-amber-500/10 text-amber-400 border-amber-500/20"
+                        : providerError
+                          ? "bg-rose-500/10 text-rose-400 border-rose-500/20"
+                          : "bg-amber-500/10 text-amber-400 border-amber-500/20"
                     )}>
-                      {usingRealData ? `LIVE • ${providerName}` : 'MOCK DATA'}
+                      {usingRealData ? `LIVE • ${providerName}` : providerError ? 'API ERROR' : 'MOCK DATA'}
                     </span>
                   )}
                 </div>
@@ -404,16 +429,24 @@ export default function LeadFinderPage() {
 
             {/* Debug Info Panel */}
             {hasSearched && !isSearching && leads.length > 0 && (
-              <div className="mb-4 p-3 bg-white/[0.02] border border-white/[0.06] flex items-center justify-between">
+              <div className={cn(
+                "mb-4 p-3 border flex items-center justify-between",
+                providerError 
+                  ? "bg-rose-500/5 border-rose-500/20" 
+                  : "bg-white/[0.02] border-white/[0.06]"
+              )}>
                 <div className="flex items-center gap-4">
                   <div className="flex items-center gap-2">
-                    <Database className="w-4 h-4 text-white/30" />
+                    <Database className={cn(
+                      "w-4 h-4",
+                      providerError ? "text-rose-400/50" : "text-white/30"
+                    )} />
                     <span className="text-xs text-white/40">Data Source:</span>
                     <span className={cn(
                       "text-xs font-bold uppercase",
-                      usingRealData ? "text-emerald-400" : "text-amber-400"
+                      usingRealData ? "text-emerald-400" : providerError ? "text-rose-400" : "text-amber-400"
                     )}>
-                      {usingRealData ? `Live ${providerName}` : 'Mock Data'}
+                      {usingRealData ? `Live ${providerName}` : providerError ? `API Error - Mock Fallback` : 'Mock Data'}
                     </span>
                   </div>
                   <div className="w-px h-4 bg-white/[0.1]" />
@@ -423,11 +456,15 @@ export default function LeadFinderPage() {
                     <span className="text-xs text-white font-mono">{leads.length}</span>
                   </div>
                 </div>
-                {usingRealData && (
+                {usingRealData ? (
                   <span className="text-[10px] text-emerald-400/60">
                     ✓ Real business data from API
                   </span>
-                )}
+                ) : providerError ? (
+                  <span className="text-[10px] text-rose-400/80 truncate max-w-xs" title={providerError}>
+                    ⚠ {providerError.includes('not activated') ? 'API not enabled in Google Cloud' : providerError.slice(0, 50)}
+                  </span>
+                ) : null}
               </div>
             )}
 
