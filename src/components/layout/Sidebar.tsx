@@ -15,7 +15,9 @@ import {
   Radio,
   Terminal,
   Plus,
-  Database
+  Database,
+  Search,
+  Crosshair
 } from 'lucide-react';
 
 const navItems = [
@@ -32,6 +34,13 @@ const navItems = [
     icon: Target, 
     href: '/leads',
     description: 'Detected leads & matches'
+  },
+  { 
+    id: 'lead-finder', 
+    label: 'Lead Finder', 
+    icon: Crosshair, 
+    href: '/lead-finder',
+    description: 'Manual business search'
   },
   { 
     id: 'sources', 
