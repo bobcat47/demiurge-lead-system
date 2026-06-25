@@ -263,10 +263,10 @@ I work with ${businessType}s to help them get more qualified leads and customers
 Would you have 15 minutes this week for a quick call to explore if we'd be a good fit? I'd love to share some specific insights about your market."`,
     
     objectionHandling: [
-      "We're too busy right now" -> "I completely understand. That's actually why many of our clients come to us - they need more qualified leads without more manual work. Our system runs automatically. Would a quick 10-minute call next week work?",
-      "We already have a website/marketing" -> "That's great! Many of our best clients had existing marketing. We specialize in enhancing what's working and filling the gaps. Could I show you a quick audit of your current setup?",
-      "How much does it cost?" -> "Our packages start at £500/month, but I'd need to understand your specific needs to give you an accurate quote. That's why I suggest a quick discovery call - no obligation.",
-      "Send me an email" -> "Absolutely, I can do that. But I find that a quick 10-minute conversation helps me understand your specific situation so I can send relevant information. Would Tuesday or Wednesday work better?",
+      'OBJECTION: "We\'re too busy right now" → RESPONSE: "I completely understand. That\'s actually why many of our clients come to us - they need more qualified leads without more manual work. Our system runs automatically. Would a quick 10-minute call next week work?"',
+      'OBJECTION: "We already have a website/marketing" → RESPONSE: "That\'s great! Many of our best clients had existing marketing. We specialize in enhancing what\'s working and filling the gaps. Could I show you a quick audit of your current setup?"',
+      'OBJECTION: "How much does it cost?" → RESPONSE: "Our packages start at £500/month, but I\'d need to understand your specific needs to give you an accurate quote. That\'s why I suggest a quick discovery call - no obligation."',
+      'OBJECTION: "Send me an email" → RESPONSE: "Absolutely, I can do that. But I find that a quick 10-minute conversation helps me understand your specific situation so I can send relevant information. Would Tuesday or Wednesday work better?"',
     ],
     
     followUpMessage: `Hi ${businessName} team,

@@ -18,10 +18,7 @@ export async function POST(
       );
     }
 
-    return NextResponse.json({
-      success: true,
-      ...result,
-    });
+    return NextResponse.json(result);
   } catch (error) {
     console.error('Send to Vapi error:', error);
     return NextResponse.json(
