@@ -25,7 +25,7 @@ export interface ApifyLead {
 
 export interface ApifyScraperOptions {
   maxResults?: number;
-  proxy?: ' residential' | 'datacenter';
+  proxy?: 'residential' | 'datacenter';
 }
 
 export class ApifyScraper {
