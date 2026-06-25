@@ -117,7 +117,7 @@ function generateBusinessName(businessType: string): string {
   return patterns[Math.floor(Math.random() * patterns.length)];
 }
 
-export async function searchLeads(params: LeadSearchParams): Promise<LeadSearchResult> {
+export async function searchMockLeads(params: LeadSearchParams): Promise<LeadSearchResult> {
   // Simulate network delay
   await new Promise(resolve => setTimeout(resolve, 1500));
   

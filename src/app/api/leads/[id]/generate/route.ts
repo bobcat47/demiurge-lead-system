@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getLeadById, generateAIAnalysis } from '@/lib/lead-finder/mock-provider';
+import { getLeadById, generateAIAnalysis } from '@/lib/lead-finder';
 
 export async function POST(
   request: Request,

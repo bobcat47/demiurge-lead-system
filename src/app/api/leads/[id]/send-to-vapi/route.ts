@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { sendToVapi } from '@/lib/lead-finder/mock-provider';
+import { sendToVapi } from '@/lib/lead-finder';
 
 export async function POST(
   request: Request,

@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getLeadById } from '@/lib/lead-finder/mock-provider';
+import { getLeadById } from '@/lib/lead-finder';
 
 export async function GET(
   request: Request,

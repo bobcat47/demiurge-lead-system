@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { searchLeads } from '@/lib/lead-finder/mock-provider';
+import { searchLeads } from '@/lib/lead-finder';
 import { LeadSearchParams } from '@/lib/lead-finder/types';
 
 export async function POST(request: Request) {

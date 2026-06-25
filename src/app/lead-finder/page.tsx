@@ -23,8 +23,10 @@ import {
   generateAIAnalysis, 
   sendToVapi, 
   saveLead,
-  updateLeadStatus 
-} from '@/lib/lead-finder/mock-provider';
+  updateLeadStatus,
+  isRealProviderAvailable,
+  getCurrentProviderName
+} from '@/lib/lead-finder';
 import { cn } from '@/lib/utils';
 
 const businessTypeSuggestions = [
@@ -36,7 +38,8 @@ const businessTypeSuggestions = [
 const locationSuggestions = [
   'London', 'Westminster', 'Manchester', 'Birmingham', 
   'Camden', 'Central London', 'Chelsea', 'Kensington',
-  'Leeds', 'Liverpool', 'Bristol', 'Edinburgh'
+  'Leeds', 'Liverpool', 'Bristol', 'Edinburgh',
+  'New York', 'Los Angeles', 'Chicago', 'Houston'
 ];
 
 export default function LeadFinderPage() {
@@ -48,6 +51,8 @@ export default function LeadFinderPage() {
   const [hasSearched, setHasSearched] = useState(false);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
+  const [usingRealData, setUsingRealData] = useState(false);
+  const [providerName, setProviderName] = useState('mock');
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [generatingId, setGeneratingId] = useState<string | null>(null);
   const [sendingToVapiId, setSendingToVapiId] = useState<string | null>(null);
@@ -71,6 +76,12 @@ export default function LeadFinderPage() {
     setIsSearching(true);
     setHasSearched(true);
     
+    // Check provider status before search
+    const realAvailable = isRealProviderAvailable();
+    const provider = getCurrentProviderName();
+    setUsingRealData(realAvailable);
+    setProviderName(provider);
+    
     try {
       const params: LeadSearchParams = {
         businessType: businessType.trim(),
@@ -80,6 +91,14 @@ export default function LeadFinderPage() {
       
       const result = await searchLeads(params);
       setLeads(result.leads);
+      
+      // Show notification about data source
+      if (realAvailable) {
+        setNotification({ 
+          message: `Found ${result.leads.length} leads using ${provider}`, 
+          type: 'success' 
+        });
+      }
     } catch (error) {
       console.error('Search failed:', error);
       setNotification({ message: 'Search failed. Please try again.', type: 'error' });
@@ -308,9 +327,22 @@ export default function LeadFinderPage() {
           </div>
           
           {/* Data Source Note */}
-          <div className="mt-4 pt-4 border-t border-white/[0.06] flex items-center gap-2 text-xs text-white/30">
+          <div className={cn(
+            "mt-4 pt-4 border-t border-white/[0.06] flex items-center gap-2 text-xs",
+            usingRealData ? "text-emerald-400" : "text-white/30"
+          )}>
             <AlertCircle className="w-4 h-4" />
-            <span>Using MOCK DATA provider. Connect to Google Places API, SerpAPI, or Apify for live search.</span>
+            {usingRealData ? (
+              <span>
+                Using LIVE DATA from <strong className="uppercase">{providerName}</strong>. 
+                Results are from real business listings.
+              </span>
+            ) : (
+              <span>
+                Using MOCK DATA for demonstration. 
+                Add GOOGLE_PLACES_API_KEY, SERPAPI_KEY, or APIFY_TOKEN environment variable for live search.
+              </span>
+            )}
           </div>
         </div>
 
@@ -320,9 +352,21 @@ export default function LeadFinderPage() {
             {/* Results Header */}
             <div className="flex items-center justify-between">
               <div>
-                <h2 className="text-lg font-semibold text-white">
-                  {isSearching ? 'Searching...' : `${leads.length} Leads Found`}
-                </h2>
+                <div className="flex items-center gap-3">
+                  <h2 className="text-lg font-semibold text-white">
+                    {isSearching ? 'Searching...' : `${leads.length} Leads Found`}
+                  </h2>
+                  {hasSearched && !isSearching && (
+                    <span className={cn(
+                      "px-2 py-0.5 text-[10px] font-bold uppercase border rounded-sm",
+                      usingRealData 
+                        ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" 
+                        : "bg-amber-500/10 text-amber-400 border-amber-500/20"
+                    )}>
+                      {usingRealData ? `LIVE • ${providerName}` : 'MOCK DATA'}
+                    </span>
+                  )}
+                </div>
                 {!isSearching && (
                   <p className="text-sm text-white/40">
                     {businessType} in {location}
