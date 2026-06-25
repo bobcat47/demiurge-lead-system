@@ -27,9 +27,7 @@ import {
   generateAIAnalysis, 
   sendToVapi, 
   saveLead,
-  updateLeadStatus,
-  isRealProviderAvailable,
-  getCurrentProviderName
+  updateLeadStatus
 } from '@/lib/lead-finder';
 import { cn } from '@/lib/utils';
 
@@ -81,11 +79,10 @@ export default function LeadFinderPage() {
     setIsSearching(true);
     setHasSearched(true);
     
-    // Check provider status before search
-    const realAvailable = isRealProviderAvailable();
-    const provider = getCurrentProviderName();
-    setUsingRealData(realAvailable);
-    setProviderName(provider);
+    // Reset provider state before search (will be updated from API response)
+    setUsingRealData(false);
+    setProviderName('loading');
+    setProviderError(null);
     
     try {
       const params: LeadSearchParams = {
@@ -97,7 +94,7 @@ export default function LeadFinderPage() {
       const result = await searchLeads(params);
       setLeads(result.leads);
       
-      // Update provider status based on actual API response
+      // Update provider status based on actual API response (source of truth)
       if (result.provider) {
         setUsingRealData(result.provider !== 'mock');
         setProviderName(result.provider);
@@ -109,7 +106,7 @@ export default function LeadFinderPage() {
       }
       
       // Show notification about data source
-      if (result.provider !== 'mock') {
+      if (result.provider && result.provider !== 'mock') {
         setNotification({ 
           message: `Found ${result.leads.length} leads using ${result.provider}`, 
           type: 'success' 
