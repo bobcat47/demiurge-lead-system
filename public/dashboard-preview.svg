@@ -1,0 +1,125 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 700">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0a0a0f"/>
+      <stop offset="100%" style="stop-color:#151520"/>
+    </linearGradient>
+    <linearGradient id="card" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:rgba(255,255,255,0.05)"/>
+      <stop offset="100%" style="stop-color:rgba(255,255,255,0.02)"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#00d4ff"/>
+      <stop offset="100%" style="stop-color:#a855f7"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="1200" height="700" fill="url(#bg)"/>
+  
+  <!-- Grid Pattern -->
+  <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+    <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(255,255,255,0.03)" stroke-width="1"/>
+  </pattern>
+  <rect width="1200" height="700" fill="url(#grid)"/>
+  
+  <!-- Sidebar -->
+  <rect x="0" y="0" width="240" height="700" fill="#0a0a0f" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+  
+  <!-- Logo Area -->
+  <circle cx="40" cy="40" r="20" fill="none" stroke="url(#accent)" stroke-width="2"/>
+  <circle cx="40" cy="40" r="5" fill="#00d4ff"/>
+  <text x="70" y="35" fill="#fff" font-family="system-ui" font-size="16" font-weight="bold">DEMIURGE</text>
+  <text x="70" y="52" fill="#00d4ff" font-family="monospace" font-size="10">OS v2.0</text>
+  
+  <!-- Menu Items -->
+  <rect x="10" y="100" width="220" height="40" rx="8" fill="rgba(0,212,255,0.1)" stroke="rgba(0,212,255,0.2)"/>
+  <text x="50" y="125" fill="#00d4ff" font-family="system-ui" font-size="13">Command Center</text>
+  
+  <text x="50" y="170" fill="rgba(255,255,255,0.5)" font-family="system-ui" font-size="13">Target Acquisition</text>
+  <text x="50" y="210" fill="rgba(255,255,255,0.5)" font-family="system-ui" font-size="13">Signal Sources</text>
+  <text x="50" y="250" fill="rgba(255,255,255,0.5)" font-family="system-ui" font-size="13">Asset Database</text>
+  
+  <!-- Main Content Area -->
+  <!-- Header -->
+  <rect x="260" y="20" width="920" height="60" rx="12" fill="url(#card)" stroke="rgba(255,255,255,0.06)"/>
+  <text x="290" y="55" fill="#fff" font-family="system-ui" font-size="14">Command Center / Dashboard</text>
+  
+  <!-- Stats Cards -->
+  <rect x="260" y="100" width="210" height="100" rx="12" fill="url(#card)" stroke="rgba(255,255,255,0.06)"/>
+  <text x="290" y="135" fill="#10b981" font-family="system-ui" font-size="12">▲ +12%</text>
+  <text x="290" y="165" fill="#fff" font-family="monospace" font-size="28" font-weight="bold">47</text>
+  <text x="290" y="185" fill="rgba(255,255,255,0.4)" font-family="system-ui" font-size="11">ACTIVE TARGETS</text>
+  
+  <rect x="490" y="100" width="210" height="100" rx="12" fill="url(#card)" stroke="rgba(255,255,255,0.06)"/>
+  <text x="520" y="135" fill="#10b981" font-family="system-ui" font-size="12">▲ +2</text>
+  <text x="520" y="165" fill="#fff" font-family="monospace" font-size="28" font-weight="bold">8</text>
+  <text x="520" y="185" fill="rgba(255,255,255,0.4)" font-family="system-ui" font-size="11">SIGNAL SOURCES</text>
+  
+  <rect x="720" y="100" width="210" height="100" rx="12" fill="url(#card)" stroke="rgba(255,255,255,0.06)"/>
+  <text x="750" y="135" fill="#10b981" font-family="system-ui" font-size="12">▲ +23</text>
+  <text x="750" y="165" fill="#fff" font-family="monospace" font-size="28" font-weight="bold">156</text>
+  <text x="750" y="185" fill="rgba(255,255,255,0.4)" font-family="system-ui" font-size="11">ASSETS DEPLOYED</text>
+  
+  <rect x="950" y="100" width="210" height="100" rx="12" fill="url(#card)" stroke="rgba(255,255,255,0.06)"/>
+  <text x="980" y="135" fill="#10b981" font-family="system-ui" font-size="12">▲ +5%</text>
+  <text x="980" y="165" fill="#fff" font-family="monospace" font-size="28" font-weight="bold">84%</text>
+  <text x="980" y="185" fill="rgba(255,255,255,0.4)" font-family="system-ui" font-size="11">MATCH RATE</text>
+  
+  <!-- Lead Feed -->
+  <rect x="260" y="220" width="630" height="450" rx="12" fill="url(#card)" stroke="rgba(255,255,255,0.06)"/>
+  <text x="290" y="260" fill="#fff" font-family="system-ui" font-size="16" font-weight="bold">Recent Targets</text>
+  <text x="420" y="260" fill="rgba(255,255,255,0.4)" font-family="system-ui" font-size="12">Live acquisition feed</text>
+  
+  <!-- Lead Items -->
+  <rect x="280" y="280" width="590" height="70" rx="8" fill="rgba(244,63,94,0.05)" stroke="rgba(244,63,94,0.2)"/>
+  <circle cx="300" cy="295" r="4" fill="#f43f5e"/>
+  <text x="320" y="300" fill="#f43f5e" font-family="monospace" font-size="10">LD-2847</text>
+  <text x="400" y="300" fill="#f43f5e" font-family="system-ui" font-size="10">CRITICAL</text>
+  <text x="320" y="325" fill="#f43f5e" font-family="system-ui" font-size="13" font-weight="600">URGENT: Pipe burst in Downtown basement</text>
+  <text x="320" y="340" fill="rgba(255,255,255,0.4)" font-family="system-ui" font-size="11">Downtown, NY • 2m ago • plumbing</text>
+  <text x="800" y="315" fill="#10b981" font-family="monospace" font-size="24" font-weight="bold">96</text>
+  <text x="840" y="315" fill="#fff" font-family="monospace" font-size="24" font-weight="bold">4</text>
+  
+  <rect x="280" y="360" width="590" height="70" rx="8" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.06)"/>
+  <text x="320" y="380" fill="rgba(255,255,255,0.4)" font-family="monospace" font-size="10">LD-2846</text>
+  <text x="320" y="405" fill="#fff" font-family="system-ui" font-size="13">Electrical panel upgrade needed</text>
+  <text x="800" y="400" fill="#00d4ff" font-family="monospace" font-size="24" font-weight="bold">78</text>
+  <text x="840" y="400" fill="#fff" font-family="monospace" font-size="24" font-weight="bold">2</text>
+  
+  <rect x="280" y="440" width="590" height="70" rx="8" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.06)"/>
+  <text x="320" y="460" fill="rgba(255,255,255,0.4)" font-family="monospace" font-size="10">LD-2845</text>
+  <text x="320" y="485" fill="#fff" font-family="system-ui" font-size="13">HVAC system replacement quote</text>
+  <text x="800" y="480" fill="#f59e0b" font-family="monospace" font-size="24" font-weight="bold">65</text>
+  <text x="840" y="480" fill="#fff" font-family="monospace" font-size="24" font-weight="bold">3</text>
+  
+  <!-- Right Panel -->
+  <rect x="910" y="220" width="270" height="210" rx="12" fill="url(#card)" stroke="rgba(255,255,255,0.06)"/>
+  <text x="935" y="255" fill="#fff" font-family="system-ui" font-size="14" font-weight="bold">Signal Sources</text>
+  <text x="1110" y="255" fill="#10b981" font-family="monospace" font-size="11">4 ONLINE</text>
+  
+  <circle cx="940" cy="290" r="4" fill="#10b981"/>
+  <text x="960" y="295" fill="rgba(255,255,255,0.8)" font-family="system-ui" font-size="12">Reddit r/HomeImprovement</text>
+  <text x="1140" y="295" fill="rgba(255,255,255,0.4)" font-family="monospace" font-size="10">98%</text>
+  
+  <circle cx="940" cy="325" r="4" fill="#10b981"/>
+  <text x="960" y="330" fill="rgba(255,255,255,0.8)" font-family="system-ui" font-size="12">Local Services Forum</text>
+  <text x="1140" y="330" fill="rgba(255,255,255,0.4)" font-family="monospace" font-size="10">94%</text>
+  
+  <circle cx="940" cy="360" r="4" fill="#f59e0b"/>
+  <text x="960" y="365" fill="rgba(255,255,255,0.8)" font-family="system-ui" font-size="12">Nextdoor API</text>
+  <text x="1140" y="365" fill="rgba(255,255,255,0.4)" font-family="monospace" font-size="10">76%</text>
+  
+  <!-- Quick Actions -->
+  <rect x="910" y="450" width="270" height="220" rx="12" fill="url(#accent)" opacity="0.1" stroke="rgba(0,212,255,0.2)"/>
+  <text x="935" y="485" fill="#00d4ff" font-family="system-ui" font-size="14" font-weight="bold">⚡ Quick Deploy</text>
+  
+  <rect x="935" y="510" width="220" height="40" rx="8" fill="rgba(0,212,255,0.1)" stroke="rgba(0,212,255,0.2)"/>
+  <text x="955" y="535" fill="#00d4ff" font-family="system-ui" font-size="13">New Scout Mission →</text>
+  
+  <rect x="935" y="560" width="220" height="40" rx="8" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.08)"/>
+  <text x="955" y="585" fill="rgba(255,255,255,0.7)" font-family="system-ui" font-size="13">Add Provider Asset →</text>
+  
+  <rect x="935" y="610" width="220" height="40" rx="8" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.08)"/>
+  <text x="955" y="635" fill="rgba(255,255,255,0.7)" font-family="system-ui" font-size="13">Export Intelligence →</text>
+</svg>

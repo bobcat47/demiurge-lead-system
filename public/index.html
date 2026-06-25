@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#1a1a2e">
+  <title>Demiurge Lead Matcher</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    :root {
+      --bg-primary: #0f0f1a;
+      --bg-secondary: #1a1a2e;
+      --bg-card: #252542;
+      --accent: #6366f1;
+      --accent-light: #818cf8;
+      --success: #22c55e;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --text-primary: #f8fafc;
+      --text-secondary: #94a3b8;
+      --border: #334155;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+    
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 16px;
+    }
+    
+    /* Header */
+    header {
+      text-align: center;
+      padding: 24px 0 16px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 20px;
+    }
+    
+    .logo {
+      font-size: 24px;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--accent), var(--accent-light));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 4px;
+    }
+    
+    .tagline {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+    
+    /* Input Section */
+    .input-section {
+      background: var(--bg-secondary);
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+    
+    .section-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 12px;
+    }
+    
+    textarea {
+      width: 100%;
+      min-height: 140px;
+      padding: 14px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: var(--bg-card);
+      color: var(--text-primary);
+      font-size: 16px;
+      resize: vertical;
+      transition: border-color 0.2s;
+      font-family: inherit;
+    }
+    
+    textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+    
+    textarea::placeholder {
+      color: #64748b;
+    }
+    
+    .btn-primary {
+      width: 100%;
+      padding: 16px;
+      margin-top: 12px;
+      border: none;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-light));
+      color: white;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.1s, opacity 0.2s;
+    }
+    
+    .btn-primary:active {
+      transform: scale(0.98);
+    }
+    
+    .btn-primary:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+    
+    /* Loading State */
+    .loading {
+      display: none;
+      text-align: center;
+      padding: 40px;
+    }
+    
+    .loading.active {
+      display: block;
+    }
+    
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 16px;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    /* Results Section */
+    .results {
+      display: none;
+    }
+    
+    .results.active {
+      display: block;
+    }
+    
+    /* Intent Card */
+    .intent-card {
+      background: linear-gradient(135deg, var(--accent), #4f46e5);
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+    
+    .intent-title {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      opacity: 0.8;
+      margin-bottom: 12px;
+    }
+    
+    .intent-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+    
+    .intent-item {
+      background: rgba(255,255,255,0.1);
+      border-radius: 10px;
+      padding: 10px 12px;
+    }
+    
+    .intent-label {
+      font-size: 11px;
+      opacity: 0.7;
+      text-transform: uppercase;
+    }
+    
+    .intent-value {
+      font-size: 15px;
+      font-weight: 600;
+      margin-top: 2px;
+    }
+    
+    .urgency-urgent { color: #fca5a5; }
+    .urgency-high { color: #fcd34d; }
+    .urgency-medium { color: #86efac; }
+    .urgency-low { color: #93c5fd; }
+    
+    /* Match Cards */
+    .matches-header {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .match-count {
+      font-size: 12px;
+      background: var(--bg-card);
+      padding: 4px 10px;
+      border-radius: 20px;
+    }
+    
+    .match-card {
+      background: var(--bg-secondary);
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 12px;
+      border: 1px solid transparent;
+      transition: border-color 0.2s;
+    }
+    
+    .match-card.top-match {
+      border-color: var(--accent);
+      background: linear-gradient(135deg, var(--bg-secondary), rgba(99, 102, 241, 0.1));
+    }
+    
+    .match-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 12px;
+    }
+    
+    .match-name {
+      font-size: 17px;
+      font-weight: 600;
+      flex: 1;
+    }
+    
+    .match-score {
+      background: var(--accent);
+      color: white;
+      font-weight: 700;
+      font-size: 14px;
+      padding: 4px 12px;
+      border-radius: 20px;
+      margin-left: 8px;
+    }
+    
+    .match-meta {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+    
+    .meta-badge {
+      font-size: 12px;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    
+    .meta-badge.emergency {
+      color: var(--danger);
+    }
+    
+    .rating-stars {
+      color: #fbbf24;
+    }
+    
+    /* Match Reasons */
+    .reasons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 14px;
+    }
+    
+    .reason-tag {
+      font-size: 11px;
+      background: var(--bg-card);
+      color: var(--text-secondary);
+      padding: 4px 10px;
+      border-radius: 20px;
+    }
+    
+    /* Templates Section */
+    .templates-toggle {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--bg-card);
+      color: var(--text-primary);
+      font-size: 14px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .templates-content {
+      display: none;
+      padding-top: 12px;
+    }
+    
+    .templates-content.active {
+      display: block;
+    }
+    
+    .template-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
+    
+    .template-tab {
+      flex-shrink: 0;
+      padding: 8px 16px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--bg-card);
+      color: var(--text-secondary);
+      font-size: 13px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    
+    .template-tab.active {
+      background: var(--accent);
+      color: white;
+      border-color: var(--accent);
+    }
+    
+    .template-panel {
+      display: none;
+    }
+    
+    .template-panel.active {
+      display: block;
+    }
+    
+    .template-box {
+      background: var(--bg-card);
+      border-radius: 10px;
+      padding: 14px;
+      font-size: 14px;
+      line-height: 1.6;
+      margin-bottom: 10px;
+      border: 1px solid var(--border);
+    }
+    
+    .template-label {
+      font-size: 11px;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    
+    .copy-btn {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: transparent;
+      color: var(--text-secondary);
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .copy-btn:active {
+      background: var(--accent);
+      color: white;
+      border-color: var(--accent);
+    }
+    
+    .copy-btn.copied {
+      background: var(--success);
+      color: white;
+      border-color: var(--success);
+    }
+    
+    /* Error State */
+    .error {
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid var(--danger);
+      border-radius: 12px;
+      padding: 16px;
+      text-align: center;
+      color: #fca5a5;
+      display: none;
+    }
+    
+    .error.active {
+      display: block;
+    }
+    
+    /* Empty State */
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--text-secondary);
+    }
+    
+    .empty-icon {
+      font-size: 48px;
+      margin-bottom: 12px;
+      opacity: 0.5;
+    }
+    
+    /* Responsive adjustments */
+    @media (min-width: 480px) {
+      .container {
+        padding: 24px;
+      }
+      
+      .intent-grid {
+        grid-template-columns: repeat(4, 1fr);
+      }
+      
+      .match-card {
+        padding: 20px;
+      }
+    }
+    
+    /* Scrollbar styling */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    
+    ::-webkit-scrollbar-track {
+      background: var(--bg-primary);
+    }
+    
+    ::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 3px;
+    }
+    
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--text-secondary);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="logo">⚡ Demiurge Lead Matcher</div>
+      <div class="tagline">Paste post text • Get instant matches</div>
+    </header>
+    
+    <!-- Input Section -->
+    <div class="input-section">
+      <div class="section-title">Post Text</div>
+      <textarea 
+        id="postText" 
+        placeholder="Paste the post text here...\n\nExample: 'Urgently need a plumber in Downtown area! My pipe burst and water is everywhere. Looking for someone who can come today. Budget is flexible for quick service.'"
+      ></textarea>
+      <button class="btn-primary" id="analyzeBtn" onclick="analyzePost()">
+        Find Matches
+      </button>
+    </div>
+    
+    <!-- Loading -->
+    <div class="loading" id="loading">
+      <div class="spinner"></div>
+      <p>Analyzing post...</p>
+    </div>
+    
+    <!-- Error -->
+    <div class="error" id="error"></div>
+    
+    <!-- Results -->
+    <div class="results" id="results">
+      <!-- Intent Card -->
+      <div class="intent-card">
+        <div class="intent-title">📊 Parsed Intent</div>
+        <div class="intent-grid">
+          <div class="intent-item">
+            <div class="intent-label">Service</div>
+            <div class="intent-value" id="intentService">-</div>
+          </div>
+          <div class="intent-item">
+            <div class="intent-label">Urgency</div>
+            <div class="intent-value" id="intentUrgency">-</div>
+          </div>
+          <div class="intent-item">
+            <div class="intent-label">Budget</div>
+            <div class="intent-value" id="intentBudget">-</div>
+          </div>
+          <div class="intent-item">
+            <div class="intent-label">Location</div>
+            <div class="intent-value" id="intentLocation">-</div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Matches -->
+      <div class="matches-header">
+        <span>🏆 Top Matches</span>
+        <span class="match-count" id="matchCount">0 found</span>
+      </div>
+      <div id="matchesContainer"></div>
+    </div>
+  </div>
+  
+  <script>
+    const API_URL = window.location.origin;
+    
+    // Track which templates are open
+    const openTemplates = new Set();
+    
+    async function analyzePost() {
+      const text = document.getElementById('postText').value.trim();
+      const btn = document.getElementById('analyzeBtn');
+      const loading = document.getElementById('loading');
+      const results = document.getElementById('results');
+      const error = document.getElementById('error');
+      
+      if (!text) {
+        showError('Please paste some post text first');
+        return;
+      }
+      
+      // Reset UI
+      error.classList.remove('active');
+      results.classList.remove('active');
+      loading.classList.add('active');
+      btn.disabled = true;
+      openTemplates.clear();
+      
+      try {
+        const response = await fetch(`${API_URL}/api/match`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ text })
+        });
+        
+        const data = await response.json();
+        
+        if (!response.ok) {
+          throw new Error(data.error || 'Failed to analyze post');
+        }
+        
+        displayResults(data);
+        
+      } catch (err) {
+        showError(err.message);
+      } finally {
+        loading.classList.remove('active');
+        btn.disabled = false;
+      }
+    }
+    
+    function showError(message) {
+      const error = document.getElementById('error');
+      error.textContent = message;
+      error.classList.add('active');
+    }
+    
+    function displayResults(data) {
+      // Update intent
+      const intent = data.intent;
+      document.getElementById('intentService').textContent = intent.service ? 
+        intent.service.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) : 'Unknown';
+      
+      const urgencyEl = document.getElementById('intentUrgency');
+      urgencyEl.textContent = intent.urgency.charAt(0).toUpperCase() + intent.urgency.slice(1);
+      urgencyEl.className = 'intent-value urgency-' + intent.urgency;
+      
+      document.getElementById('intentBudget').textContent = intent.budget.charAt(0).toUpperCase() + intent.budget.slice(1);
+      
+      const location = intent.locations.length > 0 ? intent.locations[0] : 
+                       intent.postcodes.length > 0 ? intent.postcodes[0] : 'Not detected';
+      document.getElementById('intentLocation').textContent = location;
+      
+      // Update match count
+      document.getElementById('matchCount').textContent = `${data.matches.length} found`;
+      
+      // Render matches
+      const container = document.getElementById('matchesContainer');
+      container.innerHTML = data.matches.map((match, index) => renderMatchCard(match, index)).join('');
+      
+      // Show results
+      document.getElementById('results').classList.add('active');
+    }
+    
+    function renderMatchCard(match, index) {
+      const isTop = index === 0;
+      const stars = '★'.repeat(Math.floor(match.rating || 0)) + '☆'.repeat(5 - Math.floor(match.rating || 0));
+      
+      return `
+        <div class="match-card ${isTop ? 'top-match' : ''}">
+          <div class="match-header">
+            <div class="match-name">${match.name}</div>
+            <div class="match-score">${match.score}%</div>
+          </div>
+          
+          <div class="match-meta">
+            <span class="meta-badge rating-stars">${stars} ${match.rating}</span>
+            <span class="meta-badge">⏱ ${match.responseTime || 'N/A'}</span>
+            ${match.emergencyService ? '<span class="meta-badge emergency">🚨 24/7</span>' : ''}
+            <span class="meta-badge">💰 ${match.pricingTier}</span>
+          </div>
+          
+          <div class="reasons">
+            ${match.reasons.map(r => `<span class="reason-tag">${r}</span>`).join('')}
+          </div>
+          
+          <button class="templates-toggle" onclick="toggleTemplates('${match.id}')">
+            <span>📋 Outreach Templates</span>
+            <span id="arrow-${match.id}">▼</span>
+          </button>
+          
+          <div class="templates-content" id="templates-${match.id}">
+            <div class="template-tabs">
+              <button class="template-tab active" onclick="switchTab('${match.id}', 'sms')">SMS</button>
+              <button class="template-tab" onclick="switchTab('${match.id}', 'email')">Email</button>
+              <button class="template-tab" onclick="switchTab('${match.id}', 'facebook')">Facebook</button>
+            </div>
+            
+            <div class="template-panel active" id="panel-${match.id}-sms">
+              <div class="template-box">${escapeHtml(match.templates.sms)}</div>
+              <button class="copy-btn" onclick="copyTemplate(this, '${match.id}', 'sms')">Copy SMS</button>
+            </div>
+            
+            <div class="template-panel" id="panel-${match.id}-email">
+              <div class="template-box">
+                <div class="template-label">Subject</div>
+                ${escapeHtml(match.templates.email.subject)}
+              </div>
+              <div class="template-box">
+                <div class="template-label">Body</div>
+                <pre style="margin:0;white-space:pre-wrap;font-family:inherit;">${escapeHtml(match.templates.email.body)}</pre>
+              </div>
+              <button class="copy-btn" onclick="copyTemplate(this, '${match.id}', 'email')">Copy Email</button>
+            </div>
+            
+            <div class="template-panel" id="panel-${match.id}-facebook">
+              <div class="template-box">${escapeHtml(match.templates.facebook)}</div>
+              <button class="copy-btn" onclick="copyTemplate(this, '${match.id}', 'facebook')">Copy Message</button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+    
+    function toggleTemplates(matchId) {
+      const content = document.getElementById(`templates-${matchId}`);
+      const arrow = document.getElementById(`arrow-${matchId}`);
+      
+      if (content.classList.contains('active')) {
+        content.classList.remove('active');
+        arrow.textContent = '▼';
+        openTemplates.delete(matchId);
+      } else {
+        content.classList.add('active');
+        arrow.textContent = '▲';
+        openTemplates.add(matchId);
+      }
+    }
+    
+    function switchTab(matchId, type) {
+      // Update tabs
+      const tabs = document.querySelectorAll(`#templates-${matchId} .template-tab`);
+      tabs.forEach(tab => tab.classList.remove('active'));
+      event.target.classList.add('active');
+      
+      // Update panels
+      const panels = document.querySelectorAll(`[id^="panel-${matchId}-"]`);
+      panels.forEach(panel => panel.classList.remove('active'));
+      document.getElementById(`panel-${matchId}-${type}`).classList.add('active');
+    }
+    
+    async function copyTemplate(btn, matchId, type) {
+      const panel = document.getElementById(`panel-${matchId}-${type}`);
+      let text = '';
+      
+      if (type === 'email') {
+        const boxes = panel.querySelectorAll('.template-box');
+        const subject = boxes[0].textContent.replace('Subject', '').trim();
+        const body = boxes[1].querySelector('pre').textContent;
+        text = `Subject: ${subject}\n\n${body}`;
+      } else {
+        text = panel.querySelector('.template-box').textContent.trim();
+      }
+      
+      try {
+        await navigator.clipboard.writeText(text);
+        btn.textContent = 'Copied!';
+        btn.classList.add('copied');
+        
+        setTimeout(() => {
+          btn.textContent = type === 'email' ? 'Copy Email' : type === 'sms' ? 'Copy SMS' : 'Copy Message';
+          btn.classList.remove('copied');
+        }, 2000);
+      } catch (err) {
+        btn.textContent = 'Failed to copy';
+        setTimeout(() => {
+          btn.textContent = type === 'email' ? 'Copy Email' : type === 'sms' ? 'Copy SMS' : 'Copy Message';
+        }, 2000);
+      }
+    }
+    
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+    
+    // Allow Ctrl+Enter to submit
+    document.getElementById('postText').addEventListener('keydown', function(e) {
+      if (e.ctrlKey && e.key === 'Enter') {
+        analyzePost();
+      }
+    });
+  </script>
+</body>
+</html>

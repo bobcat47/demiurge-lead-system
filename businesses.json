@@ -1,0 +1,188 @@
+[
+  {
+    "id": "plumb-pro-001",
+    "name": "PlumbPro Emergency Services",
+    "services": ["plumbing", "drain cleaning", "emergency repairs", "boiler repair"],
+    "areas": ["Downtown", "Midtown", "Westside", "Riverside"],
+    "postcodes": ["SW1", "SW2", "W1", "W2", "EC1"],
+    "pricingTier": "premium",
+    "emergencyService": true,
+    "responseTime": "1 hour",
+    "rating": 4.8,
+    "contacts": {
+      "phone": "+44 20 7123 4567",
+      "email": "jobs@plumbpro.co.uk",
+      "facebook": "PlumbProLondon"
+    }
+  },
+  {
+    "id": "quick-fix-002",
+    "name": "Quick Fix Plumbing",
+    "services": ["plumbing", "leak repair", "tap installation", "toilet repair"],
+    "areas": ["Northside", "Eastside", "Midtown"],
+    "postcodes": ["N1", "N2", "E1", "E2", "EC2"],
+    "pricingTier": "budget",
+    "emergencyService": false,
+    "responseTime": "Same day",
+    "rating": 4.2,
+    "contacts": {
+      "phone": "+44 20 7456 7890",
+      "email": "info@quickfixplumbing.co.uk"
+    }
+  },
+  {
+    "id": "spark-electric-003",
+    "name": "Spark Electricians",
+    "services": ["electrical", "rewiring", "lighting installation", "fuse box upgrades"],
+    "areas": ["Downtown", "Southside", "Westside", "Uptown"],
+    "postcodes": ["SW1", "SW3", "W1", "SE1", "NW1"],
+    "pricingTier": "standard",
+    "emergencyService": true,
+    "responseTime": "2 hours",
+    "rating": 4.6,
+    "contacts": {
+      "phone": "+44 20 7789 0123",
+      "email": "emergency@sparkelectricians.co.uk",
+      "facebook": "SparkElectriciansUK"
+    }
+  },
+  {
+    "id": "bright-spark-004",
+    "name": "Bright Spark Electrical",
+    "services": ["electrical", "domestic electrics", "pat testing", "smart home"],
+    "areas": ["Eastside", "Northside", "Riverside"],
+    "postcodes": ["E1", "E3", "N1", "N3"],
+    "pricingTier": "budget",
+    "emergencyService": false,
+    "responseTime": "24 hours",
+    "rating": 4.4,
+    "contacts": {
+      "phone": "+44 20 7012 3456",
+      "email": "quotes@brightspark.co.uk"
+    }
+  },
+  {
+    "id": "cool-air-005",
+    "name": "CoolAir HVAC Solutions",
+    "services": ["hvac", "air conditioning", "heating", "ventilation", "boiler service"],
+    "areas": ["Downtown", "Uptown", "Business District", "Westside"],
+    "postcodes": ["EC1", "EC2", "W1", "W2", "NW1"],
+    "pricingTier": "premium",
+    "emergencyService": true,
+    "responseTime": "4 hours",
+    "rating": 4.7,
+    "contacts": {
+      "phone": "+44 20 7234 5678",
+      "email": "service@coolairhvac.co.uk",
+      "facebook": "CoolAirHVAC"
+    }
+  },
+  {
+    "id": "roof-masters-006",
+    "name": "Roof Masters Ltd",
+    "services": ["roofing", "guttering", "chimney repair", "roof inspection"],
+    "areas": ["Northside", "Southside", "Eastside", "Westside"],
+    "postcodes": ["N1", "N2", "SE1", "E1", "W1"],
+    "pricingTier": "standard",
+    "emergencyService": false,
+    "responseTime": "48 hours",
+    "rating": 4.5,
+    "contacts": {
+      "phone": "+44 20 7567 8901",
+      "email": "enquiries@roofmasters.co.uk"
+    }
+  },
+  {
+    "id": "green-thumb-007",
+    "name": "Green Thumb Landscaping",
+    "services": ["landscaping", "garden design", "lawn care", "tree surgery", "fencing"],
+    "areas": ["Suburbs", "Riverside", "Uptown", "Westside"],
+    "postcodes": ["SW3", "SW4", "NW2", "NW3"],
+    "pricingTier": "standard",
+    "emergencyService": false,
+    "responseTime": "1 week",
+    "rating": 4.9,
+    "contacts": {
+      "phone": "+44 20 7890 1234",
+      "email": "design@greenthumb.co.uk",
+      "facebook": "GreenThumbLandscaping"
+    }
+  },
+  {
+    "id": "spotless-008",
+    "name": "Spotless Cleaning Co",
+    "services": ["cleaning", "deep cleaning", "carpet cleaning", "office cleaning", "end of tenancy"],
+    "areas": ["Downtown", "Business District", "Midtown"],
+    "postcodes": ["EC1", "EC2", "EC3", "W1"],
+    "pricingTier": "budget",
+    "emergencyService": false,
+    "responseTime": "24-48 hours",
+    "rating": 4.3,
+    "contacts": {
+      "phone": "+44 20 7123 9876",
+      "email": "book@spotlesscleaning.co.uk"
+    }
+  },
+  {
+    "id": "pro-paint-009",
+    "name": "Pro Painters & Decorators",
+    "services": ["painting", "decorating", "wallpapering", "exterior painting"],
+    "areas": ["Northside", "Southside", "Eastside", "Westside", "Central"],
+    "postcodes": ["N1", "SE1", "E1", "W1", "WC1"],
+    "pricingTier": "standard",
+    "emergencyService": false,
+    "responseTime": "1-2 weeks",
+    "rating": 4.6,
+    "contacts": {
+      "phone": "+44 20 7456 4321",
+      "email": "quote@propainters.co.uk",
+      "facebook": "ProPaintersLondon"
+    }
+  },
+  {
+    "id": "pest-away-010",
+    "name": "Pest Away Control",
+    "services": ["pest control", "rodent control", "insect removal", "prevention"],
+    "areas": ["Downtown", "Midtown", "Riverside", "Suburbs"],
+    "postcodes": ["SW1", "SW2", "E1", "SE1"],
+    "pricingTier": "standard",
+    "emergencyService": true,
+    "responseTime": "Same day",
+    "rating": 4.5,
+    "contacts": {
+      "phone": "+44 20 7789 6543",
+      "email": "urgent@pestaway.co.uk"
+    }
+  },
+  {
+    "id": "easy-move-011",
+    "name": "Easy Move Removals",
+    "services": ["moving", "house removal", "office relocation", "man with van", "packing"],
+    "areas": ["All London Areas", "Greater London"],
+    "postcodes": ["N1", "NW1", "W1", "SW1", "SE1", "E1", "EC1"],
+    "pricingTier": "budget",
+    "emergencyService": false,
+    "responseTime": "48 hours",
+    "rating": 4.4,
+    "contacts": {
+      "phone": "+44 20 7012 8765",
+      "email": "book@easymoveremovals.co.uk",
+      "facebook": "EasyMoveLondon"
+    }
+  },
+  {
+    "id": "secure-lock-012",
+    "name": "Secure Lock Locksmiths",
+    "services": ["locksmith", "emergency entry", "lock replacement", "security upgrades"],
+    "areas": ["All London Areas"],
+    "postcodes": ["N1", "NW1", "W1", "SW1", "SE1", "E1", "EC1", "WC1"],
+    "pricingTier": "premium",
+    "emergencyService": true,
+    "responseTime": "30 minutes",
+    "rating": 4.8,
+    "contacts": {
+      "phone": "+44 20 7234 0987",
+      "email": "emergency@securelock.co.uk"
+    }
+  }
+]
