@@ -80,13 +80,21 @@ const navItems = [
 export function Sidebar() {
   const pathname = usePathname();
 
+  // Check if current path matches or starts with the href
+  const isActiveRoute = (href: string) => {
+    if (href === '/') {
+      return pathname === '/';
+    }
+    return pathname === href || pathname.startsWith(`${href}/`);
+  };
+
   return (
     <aside className="fixed left-0 top-0 w-72 h-screen bg-[#0a0a0f] border-r border-white/[0.06] flex flex-col z-50">
       {/* Header */}
       <div className="p-6 border-b border-white/[0.06]">
-        <div className="flex items-center gap-3">
+        <Link href="/" className="flex items-center gap-3 group">
           <div className="relative">
-            <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-cyan-500 to-purple-600 flex items-center justify-center">
+            <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-cyan-500 to-purple-600 flex items-center justify-center group-hover:shadow-[0_0_20px_rgba(0,212,255,0.3)] transition-shadow">
               <Radar className="w-6 h-6 text-white" />
             </div>
             <div className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-500 rounded-full animate-pulse" />
@@ -98,13 +106,13 @@ export function Sidebar() {
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
             </div>
           </div>
-        </div>
+        </Link>
       </div>
 
       {/* Navigation */}
       <nav className="flex-1 overflow-y-auto py-4 px-3 space-y-1">
         {navItems.map((item) => {
-          const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
+          const isActive = isActiveRoute(item.href);
           
           return (
             <Link
