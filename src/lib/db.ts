@@ -32,8 +32,221 @@ function safeJsonParse<T>(value: any, defaultValue: T): T {
   }
 }
 
-// Simple database client
+// Generic query options
+interface QueryOptions {
+  where?: Record<string, any>;
+  orderBy?: { column: string; direction?: 'asc' | 'desc' };
+  limit?: number;
+}
+
+// Extended database client with generic operations
 export const db = {
+  // Generic query
+  async query(table: string, options: QueryOptions = {}): Promise<any[]> {
+    try {
+      if (useSupabase && supabase) {
+        let query = supabase.from(table).select('*');
+        
+        if (options.where) {
+          Object.entries(options.where).forEach(([key, value]) => {
+            query = query.eq(key, value);
+          });
+        }
+        
+        if (options.orderBy) {
+          query = query.order(options.orderBy.column, { 
+            ascending: options.orderBy.direction === 'asc' 
+          });
+        }
+        
+        if (options.limit) {
+          query = query.limit(options.limit);
+        }
+        
+        const { data, error } = await query;
+        if (error) {
+          console.warn(`Query error on ${table}:`, error);
+          return [];
+        }
+        return data || [];
+      } else if (pgPool) {
+        const client = await pgPool.connect();
+        try {
+          let sql = `SELECT * FROM ${table}`;
+          const params: any[] = [];
+          
+          if (options.where) {
+            const conditions = Object.entries(options.where).map(([key, value], idx) => {
+              params.push(value);
+              return `${key} = $${idx + 1}`;
+            });
+            sql += ` WHERE ${conditions.join(' AND ')}`;
+          }
+          
+          if (options.orderBy) {
+            sql += ` ORDER BY ${options.orderBy.column} ${options.orderBy.direction === 'desc' ? 'DESC' : 'ASC'}`;
+          }
+          
+          if (options.limit) {
+            sql += ` LIMIT $${params.length + 1}`;
+            params.push(options.limit);
+          }
+          
+          const result = await client.query(sql, params);
+          return result.rows.map(row => ({
+            ...row,
+            config: safeJsonParse(row.config, {}),
+            raw_summary: safeJsonParse(row.raw_summary, {}),
+            contact_public_info: safeJsonParse(row.contact_public_info, {}),
+            match_reasons: safeJsonParse(row.match_reasons, []),
+            payload: safeJsonParse(row.payload, {}),
+            summary: safeJsonParse(row.summary, {})
+          }));
+        } finally {
+          client.release();
+        }
+      }
+      return [];
+    } catch (error) {
+      console.error(`Error in query ${table}:`, error);
+      return [];
+    }
+  },
+
+  // Generic insert
+  async insert(table: string, data: Record<string, any>): Promise<any> {
+    try {
+      if (useSupabase && supabase) {
+        const { data: result, error } = await supabase
+          .from(table)
+          .insert(data)
+          .select()
+          .single();
+        
+        if (error) {
+          console.warn(`Insert error on ${table}:`, error);
+          throw error;
+        }
+        return result;
+      } else if (pgPool) {
+        const client = await pgPool.connect();
+        try {
+          const columns = Object.keys(data);
+          const values = Object.values(data);
+          const placeholders = values.map((_, i) => `$${i + 1}`).join(', ');
+          
+          const sql = `INSERT INTO ${table} (${columns.join(', ')}) VALUES (${placeholders}) RETURNING *`;
+          const result = await client.query(sql, values);
+          return result.rows[0];
+        } finally {
+          client.release();
+        }
+      }
+      throw new Error('No database connection');
+    } catch (error) {
+      console.error(`Error in insert ${table}:`, error);
+      throw error;
+    }
+  },
+
+  // Generic update
+  async update(table: string, { where, data }: { where: Record<string, any>; data: Record<string, any> }): Promise<any> {
+    try {
+      if (useSupabase && supabase) {
+        let query = supabase.from(table).update(data);
+        
+        Object.entries(where).forEach(([key, value]) => {
+          query = query.eq(key, value);
+        });
+        
+        const { data: result, error } = await query.select().single();
+        
+        if (error) {
+          console.warn(`Update error on ${table}:`, error);
+          throw error;
+        }
+        return result;
+      } else if (pgPool) {
+        const client = await pgPool.connect();
+        try {
+          const setClause = Object.keys(data).map((key, i) => `${key} = $${i + 1}`).join(', ');
+          const whereClause = Object.keys(where).map((key, i) => `${key} = $${Object.keys(data).length + i + 1}`).join(' AND ');
+          
+          const sql = `UPDATE ${table} SET ${setClause} WHERE ${whereClause} RETURNING *`;
+          const values = [...Object.values(data), ...Object.values(where)];
+          
+          const result = await client.query(sql, values);
+          return result.rows[0];
+        } finally {
+          client.release();
+        }
+      }
+      throw new Error('No database connection');
+    } catch (error) {
+      console.error(`Error in update ${table}:`, error);
+      throw error;
+    }
+  },
+
+  // Generic delete
+  async delete(table: string, where: Record<string, any>): Promise<boolean> {
+    try {
+      if (useSupabase && supabase) {
+        let query = supabase.from(table).delete();
+        
+        Object.entries(where).forEach(([key, value]) => {
+          query = query.eq(key, value);
+        });
+        
+        const { error } = await query;
+        
+        if (error) {
+          console.warn(`Delete error on ${table}:`, error);
+          return false;
+        }
+        return true;
+      } else if (pgPool) {
+        const client = await pgPool.connect();
+        try {
+          const whereClause = Object.keys(where).map((key, i) => `${key} = $${i + 1}`).join(' AND ');
+          const sql = `DELETE FROM ${table} WHERE ${whereClause}`;
+          
+          await client.query(sql, Object.values(where));
+          return true;
+        } finally {
+          client.release();
+        }
+      }
+      return false;
+    } catch (error) {
+      console.error(`Error in delete ${table}:`, error);
+      return false;
+    }
+  },
+
+  // Raw SQL query (use carefully)
+  async raw(sql: string, params?: any[]): Promise<any[]> {
+    try {
+      if (useSupabase && supabase) {
+        // For Supabase, we'll use RPC or fallback to limited functionality
+        console.warn('Raw SQL not fully supported in Supabase mode');
+        return [];
+      } else if (pgPool) {
+        const client = await pgPool.connect();
+        try {
+          const result = await client.query(sql, params);
+          return result.rows;
+        } finally {
+          client.release();
+        }
+      }
+      return [];
+    } catch (error) {
+      console.error('Error in raw query:', error);
+      return [];
+    }
+  },
+
   // Get leads with relations
   async getLeads(filters?: { status?: string; limit?: number }) {
     try {

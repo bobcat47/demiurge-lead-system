@@ -17,7 +17,9 @@ import {
   Plus,
   Database,
   Search,
-  Crosshair
+  Crosshair,
+  Megaphone,
+  Handshake
 } from 'lucide-react';
 
 const navItems = [
@@ -27,6 +29,20 @@ const navItems = [
     icon: Radar, 
     href: '/',
     description: 'Live intelligence feed'
+  },
+  { 
+    id: 'intent-leads', 
+    label: 'Intent Leads', 
+    icon: Megaphone, 
+    href: '/intent-leads',
+    description: 'Detected demand signals'
+  },
+  { 
+    id: 'deal-matches', 
+    label: 'Deal Matches', 
+    icon: Handshake, 
+    href: '/deal-matches',
+    description: 'Matched opportunities'
   },
   { 
     id: 'leads', 
