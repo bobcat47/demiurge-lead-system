@@ -1,6 +1,7 @@
 'use client';
 
 import { Lead, AIAnalysis } from '@/lib/lead-finder/types';
+import { useAIStatus } from '@/hooks/useAIStatus';
 import { cn } from '@/lib/utils';
 import { 
   X, 
@@ -20,7 +21,8 @@ import {
   FileText,
   MessageSquare,
   Zap,
-  CheckCircle2
+  CheckCircle2,
+  Settings
 } from 'lucide-react';
 import { useState } from 'react';
 
@@ -46,6 +48,7 @@ export function LeadDetailDrawer({
   isSendingToVapi
 }: LeadDetailDrawerProps) {
   const [activeTab, setActiveTab] = useState<'overview' | 'ai-analysis'>('overview');
+  const aiStatus = useAIStatus();
   
   if (!lead) return null;
 
@@ -295,28 +298,50 @@ export function LeadDetailDrawer({
             <div className="p-6 space-y-6">
               {!hasAIAnalysis ? (
                 <div className="flex flex-col items-center justify-center py-20 text-center">
-                  <Bot className="w-16 h-16 text-white/10 mb-4" />
-                  <h3 className="text-lg font-medium text-white mb-2">No AI Analysis Yet</h3>
-                  <p className="text-white/40 mb-6 max-w-sm">
-                    Generate an AI proposal and Vapi call script tailored for this lead.
-                  </p>
-                  <button
-                    onClick={() => onGenerateProposal(lead)}
-                    disabled={isGenerating}
-                    className="flex items-center gap-2 px-6 py-3 bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 hover:bg-cyan-500/20 transition-colors disabled:opacity-50"
-                  >
-                    {isGenerating ? (
-                      <>
-                        <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
-                        Generating...
-                      </>
-                    ) : (
-                      <>
-                        <Sparkles className="w-4 h-4" />
-                        Generate AI Proposal
-                      </>
-                    )}
-                  </button>
+                  {!aiStatus.available ? (
+                    <>
+                      <AlertTriangle className="w-16 h-16 text-amber-400/30 mb-4" />
+                      <h3 className="text-lg font-medium text-white mb-2">AI Proposal Generation Unavailable</h3>
+                      <p className="text-white/40 mb-4 max-w-sm">
+                        Add a free AI provider key in Settings to enable AI-powered proposal generation.
+                      </p>
+                      <p className="text-sm text-amber-400/60 mb-6">
+                        Supported: OpenRouter, Google Gemini, Groq (all have free tiers)
+                      </p>
+                      <a
+                        href="/settings"
+                        className="flex items-center gap-2 px-6 py-3 bg-amber-500/10 border border-amber-500/20 text-amber-400 hover:bg-amber-500/20 transition-colors"
+                      >
+                        <Settings className="w-4 h-4" />
+                        Go to Settings
+                      </a>
+                    </>
+                  ) : (
+                    <>
+                      <Bot className="w-16 h-16 text-white/10 mb-4" />
+                      <h3 className="text-lg font-medium text-white mb-2">No AI Analysis Yet</h3>
+                      <p className="text-white/40 mb-6 max-w-sm">
+                        Generate an AI proposal and Vapi call script tailored for this lead.
+                      </p>
+                      <button
+                        onClick={() => onGenerateProposal(lead)}
+                        disabled={isGenerating}
+                        className="flex items-center gap-2 px-6 py-3 bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 hover:bg-cyan-500/20 transition-colors disabled:opacity-50"
+                      >
+                        {isGenerating ? (
+                          <>
+                            <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                            Generating...
+                          </>
+                        ) : (
+                          <>
+                            <Sparkles className="w-4 h-4" />
+                            Generate AI Proposal
+                          </>
+                        )}
+                      </button>
+                    </>
+                  )}
                 </div>
               ) : (
                 <div className="space-y-6">
@@ -468,22 +493,27 @@ export function LeadDetailDrawer({
         <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-white/[0.06] bg-[#0a0a0f]">
           <div className="grid grid-cols-3 gap-3">
             <button
-              onClick={() => onGenerateProposal(lead)}
-              disabled={isGenerating}
+              onClick={() => aiStatus.available && onGenerateProposal(lead)}
+              disabled={isGenerating || !aiStatus.available}
+              title={!aiStatus.available ? 'AI proposal generation unavailable — add a free AI provider key in Settings' : undefined}
               className={cn(
                 'flex items-center justify-center gap-2 px-4 py-3 text-sm font-medium transition-colors border',
-                hasAIAnalysis
-                  ? 'bg-amber-500/10 border-amber-500/20 text-amber-400 hover:bg-amber-500/20'
-                  : 'bg-cyan-500/10 border-cyan-500/20 text-cyan-400 hover:bg-cyan-500/20',
+                !aiStatus.available
+                  ? 'bg-white/[0.03] border-white/[0.08] text-white/30 cursor-not-allowed'
+                  : hasAIAnalysis
+                    ? 'bg-amber-500/10 border-amber-500/20 text-amber-400 hover:bg-amber-500/20'
+                    : 'bg-cyan-500/10 border-cyan-500/20 text-cyan-400 hover:bg-cyan-500/20',
                 isGenerating && 'opacity-50 cursor-not-allowed'
               )}
             >
               {isGenerating ? (
                 <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+              ) : !aiStatus.available ? (
+                <AlertTriangle className="w-4 h-4" />
               ) : (
                 <Sparkles className="w-4 h-4" />
               )}
-              {hasAIAnalysis ? 'Regenerate' : 'AI Generate'}
+              {!aiStatus.available ? 'AI Unavailable' : hasAIAnalysis ? 'Regenerate' : 'AI Generate'}
             </button>
             
             <button

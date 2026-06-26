@@ -203,7 +203,17 @@ export async function updateLeadStatus(id: string, status: Lead['status']): Prom
 }
 
 export async function generateAIAnalysis(lead: Lead): Promise<AIAnalysis> {
-  await new Promise(resolve => setTimeout(resolve, 2500));
+  // Try to use real AI provider first
+  try {
+    const { generateAIAnalysisWithProvider } = await import('@/lib/ai/analysis-generator');
+    return await generateAIAnalysisWithProvider(lead);
+  } catch (error) {
+    // Fall back to mock/template generation if AI is unavailable
+    console.log('AI generation unavailable, using template fallback:', error);
+  }
+
+  // Template-based fallback (no AI)
+  await new Promise(resolve => setTimeout(resolve, 1500));
   
   const businessType = lead.businessType;
   const businessName = lead.businessName;

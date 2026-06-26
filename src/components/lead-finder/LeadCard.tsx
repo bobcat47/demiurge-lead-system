@@ -1,6 +1,7 @@
 'use client';
 
 import { Lead } from '@/lib/lead-finder/types';
+import { useAIStatus } from '@/hooks/useAIStatus';
 import { cn } from '@/lib/utils';
 import { 
   MapPin, 
@@ -12,7 +13,8 @@ import {
   PhoneCall,
   Bookmark,
   ChevronRight,
-  Sparkles
+  Sparkles,
+  AlertCircle
 } from 'lucide-react';
 
 interface LeadCardProps {
@@ -43,6 +45,7 @@ export function LeadCard({
   isSendingToVapi
 }: LeadCardProps) {
   const status = statusConfig[lead.status];
+  const aiStatus = useAIStatus();
   
   return (
     <div className="group relative bg-[#0f0f14] border border-white/[0.06] hover:border-cyan-500/30 transition-all duration-200 overflow-hidden">
@@ -152,22 +155,27 @@ export function LeadCard({
           </button>
           
           <button
-            onClick={() => onGenerateProposal(lead)}
-            disabled={isGenerating}
+            onClick={() => aiStatus.available && onGenerateProposal(lead)}
+            disabled={isGenerating || !aiStatus.available}
+            title={!aiStatus.available ? 'AI proposal generation unavailable — add a free AI provider key in Settings' : undefined}
             className={cn(
               'flex items-center justify-center gap-1.5 px-3 py-2 text-xs transition-all border',
-              lead.aiAnalysis 
-                ? 'bg-amber-500/10 border-amber-500/20 text-amber-400 hover:bg-amber-500/20'
-                : 'bg-cyan-500/10 border-cyan-500/20 text-cyan-400 hover:bg-cyan-500/20',
+              !aiStatus.available
+                ? 'bg-white/[0.03] border-white/[0.08] text-white/30 cursor-not-allowed'
+                : lead.aiAnalysis 
+                  ? 'bg-amber-500/10 border-amber-500/20 text-amber-400 hover:bg-amber-500/20'
+                  : 'bg-cyan-500/10 border-cyan-500/20 text-cyan-400 hover:bg-cyan-500/20',
               isGenerating && 'opacity-50 cursor-not-allowed'
             )}
           >
             {isGenerating ? (
               <div className="w-3.5 h-3.5 border-2 border-current border-t-transparent rounded-full animate-spin" />
+            ) : !aiStatus.available ? (
+              <AlertCircle className="w-3.5 h-3.5" />
             ) : (
               <Bot className="w-3.5 h-3.5" />
             )}
-            {lead.aiAnalysis ? 'Regenerate' : 'AI Generate'}
+            {!aiStatus.available ? 'AI Unavailable' : lead.aiAnalysis ? 'Regenerate' : 'AI Generate'}
           </button>
           
           <button

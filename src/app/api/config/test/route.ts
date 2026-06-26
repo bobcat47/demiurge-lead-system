@@ -1,7 +1,9 @@
 import { NextResponse } from 'next/server';
+import { getActiveAIProvider, getAllAIProviderStatuses, isAIProposalAvailable } from '@/lib/ai/ai-service';
 
 export async function GET() {
   const config = {
+    // Lead Finder Data Providers
     googlePlaces: {
       configured: !!process.env.GOOGLE_PLACES_API_KEY,
       keyPreview: process.env.GOOGLE_PLACES_API_KEY 
@@ -20,13 +22,18 @@ export async function GET() {
         ? `${process.env.APIFY_TOKEN.substring(0, 8)}...${process.env.APIFY_TOKEN.slice(-4)}`
         : null,
     },
-    activeProvider: getActiveProvider(),
+    activeProvider: getActiveLeadProvider(),
+    
+    // AI Proposal Generation Providers
+    aiProviders: getAllAIProviderStatuses(),
+    activeAIProvider: getActiveAIProvider(),
+    aiProposalAvailable: isAIProposalAvailable(),
   };
 
   return NextResponse.json({ success: true, config });
 }
 
-function getActiveProvider(): string {
+function getActiveLeadProvider(): string {
   if (process.env.GOOGLE_PLACES_API_KEY) return 'google-places';
   if (process.env.SERPAPI_KEY) return 'serpapi';
   if (process.env.APIFY_TOKEN) return 'apify';

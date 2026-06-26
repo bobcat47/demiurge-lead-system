@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
-import { getLeadById, generateAIAnalysis } from '@/lib/lead-finder';
+import { getLeadById } from '@/lib/lead-finder';
+import { generateAIAnalysisWithProvider } from '@/lib/ai/analysis-generator';
 
 export async function POST(
   request: Request,
@@ -15,7 +16,7 @@ export async function POST(
       );
     }
 
-    const analysis = await generateAIAnalysis(lead);
+    const analysis = await generateAIAnalysisWithProvider(lead);
 
     return NextResponse.json({
       success: true,
@@ -24,9 +25,17 @@ export async function POST(
     });
   } catch (error) {
     console.error('Generate AI analysis error:', error);
+    
+    // Check if it's an AI configuration error
+    const errorMessage = error instanceof Error ? error.message : 'Failed to generate AI analysis';
+    const isConfigError = errorMessage.includes('unavailable') || errorMessage.includes('add a free AI provider');
+    
     return NextResponse.json(
-      { error: 'Failed to generate AI analysis' },
-      { status: 500 }
+      { 
+        error: errorMessage,
+        code: isConfigError ? 'AI_NOT_CONFIGURED' : 'GENERATION_FAILED',
+      },
+      { status: isConfigError ? 503 : 500 }
     );
   }
 }
