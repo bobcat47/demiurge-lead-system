@@ -21,15 +21,38 @@ import {
 import { Header } from '@/components/layout/Header';
 import { LeadCard } from '@/components/lead-finder/LeadCard';
 import { LeadDetailDrawer } from '@/components/lead-finder/LeadDetailDrawer';
-import { Lead, LeadSearchParams } from '@/lib/lead-finder/types';
+import { Lead, LeadSearchParams, LeadSearchResult } from '@/lib/lead-finder/types';
 import { 
-  searchLeads, 
   generateAIAnalysis, 
   sendToVapi, 
   saveLead,
   updateLeadStatus
 } from '@/lib/lead-finder';
 import { cn } from '@/lib/utils';
+
+// Client-side API call for searching leads
+async function searchLeadsClient(params: LeadSearchParams): Promise<LeadSearchResult> {
+  const response = await fetch('/api/leads/search', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(params),
+  });
+  
+  if (!response.ok) {
+    throw new Error('Search failed');
+  }
+  
+  const data = await response.json();
+  return {
+    leads: data.leads,
+    total: data.total,
+    query: data.query,
+    searchId: data.searchId,
+    provider: data.provider,
+    providerError: data.providerError,
+    usingMockData: data.usingMockData,
+  };
+}
 
 const businessTypeSuggestions = [
   'plumber', 'electrician', 'dentist', 'barber', 'pharmacy', 
@@ -91,7 +114,7 @@ export default function LeadFinderPage() {
         limit: 20,
       };
       
-      const result = await searchLeads(params);
+      const result = await searchLeadsClient(params);
       setLeads(result.leads);
       
       // Update provider status based on actual API response (source of truth)
