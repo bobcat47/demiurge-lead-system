@@ -21,6 +21,40 @@ export async function POST() {
     
     try {
       const migrationSql = `
+-- Create providers table first (referenced by foreign keys)
+CREATE TABLE IF NOT EXISTS providers (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    business_name VARCHAR(255) NOT NULL,
+    services JSONB DEFAULT '[]',
+    service_areas JSONB DEFAULT '[]',
+    location_lat DECIMAL(10, 8),
+    location_lng DECIMAL(11, 8),
+    rating DECIMAL(3, 2),
+    review_count INTEGER,
+    is_active BOOLEAN DEFAULT true,
+    is_verified BOOLEAN DEFAULT false,
+    phone VARCHAR(50),
+    email VARCHAR(255),
+    website VARCHAR(255),
+    contacts JSONB DEFAULT '{}',
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS leads (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    source VARCHAR(100),
+    source_url TEXT,
+    content TEXT,
+    detected_intent JSONB DEFAULT '{}',
+    status VARCHAR(50) DEFAULT 'pending',
+    confidence_score DECIMAL(5, 2),
+    location_text VARCHAR(255),
+    detected_at TIMESTAMPTZ DEFAULT NOW(),
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
 CREATE TABLE IF NOT EXISTS source_configs (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     name VARCHAR(255) NOT NULL,
